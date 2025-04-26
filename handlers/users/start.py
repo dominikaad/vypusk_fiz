@@ -42,18 +42,22 @@ async def get_fio(message: Message, state: FSMContext):
 async def get_fio(message: Message, state: FSMContext):
     a = await state.get_state()
     await state.update_data(clas=message.text)
-    data = await state.get_data()
-    score_first = 0
-    name = data['name']
-    clas = data['clas']
-    id_user = message.chat.id
-    await state.clear()
-    cursor.execute(
-        "INSERT INTO users (id_user, user_name, class, score) VALUES (?, ?, ?, ?)",
-        [id_user, name, clas, score_first])
-    con.commit()
-    builder = ReplyKeyboardBuilder()
-    for button in kb_start:
-        builder.add(button)
-    builder.adjust(1)
-    await message.answer('Регистрация успешно завершена',  reply_markup=builder.as_markup(resize_keyboard=True))
+    print(type(message.text))
+    if message.text == '1' or message.text == '2' or message.text == '3' or message.text == '5' or message.text == '6' or message.text == '7' or message.text == '8' or message.text == '9' or message.text == '10' or message.text == '11':
+        data = await state.get_data()
+        score_first = 0
+        name = data['name']
+        clas = data['clas']
+        id_user = message.chat.id
+        await state.clear()
+        cursor.execute(
+            "INSERT INTO users (id_user, user_name, class, score) VALUES (?, ?, ?, ?)",
+            [id_user, name, clas, score_first])
+        con.commit()
+        builder = ReplyKeyboardBuilder()
+        for button in kb_start:
+            builder.add(button)
+        builder.adjust(1)
+        await message.answer('Регистрация успешно завершена', reply_markup=builder.as_markup(resize_keyboard=True))
+    else:
+        await message.answer('Неверный ввод')

@@ -17,7 +17,7 @@ async def test_mech(message: Message, state: FSMContext):
     num = cursor.fetchall()
     cursor.execute("SELECT uslov FROM test_mech")
     uslov = cursor.fetchall()
-    await message.answer(f'Задача №{num[0][0]}\nВведите только число, округленное по математическим правилам')
+    await message.answer(f'Задача №{num[0][0]}\nВведите только число, округленное до целого по математическим правилам')
     fot1 = f'{uslov[0][0]}.pdf'
     task_image1 = FSInputFile(fot1)
     await state.set_state(Form_mech.otv1_mech)
@@ -36,28 +36,32 @@ async def get_fio(message: Message, state: FSMContext):
     otvet = data['otvet']
     print(otvet)
     print(cor_otv[0][0])
-    if int(otvet) == int(cor_otv[0][0]):
-        cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
-        score_first = cursor.fetchall()
-        score_new = score_first[0][0]+1
-        print(score_new)
-        cursor.execute("UPDATE users SET score = (?) WHERE id_user = (?)", [score_new, id_user])
-        con.commit()
-        await message.answer(text='Вы решили верно!')
-    else:
-        fot2 = f'{foto_answ[0][0]}.jpg'
-        task_image2 = FSInputFile(fot2)
-        await message.answer(text='К сожалению вы решили не верно.\nВот правильное решение:')
-        await message.answer_photo(photo=task_image2, reply_markup=types.ReplyKeyboardRemove())
-    cursor.execute("SELECT number FROM test_mech")
-    num = cursor.fetchall()
-    cursor.execute("SELECT uslov FROM test_mech")
-    uslov = cursor.fetchall()
-    await message.answer(f'Задача №{num[1][0]}\nВведите только число, округленное по математическим правилам')
-    fot1 = f'{uslov[1][0]}.pdf'
-    task_image1 = FSInputFile(fot1)
-    await state.set_state(Form_mech.otv2_mech)
-    await message.answer_photo(photo=task_image1, reply_markup=types.ReplyKeyboardRemove())
+    try:
+        number = int(otvet)
+        if number == int(cor_otv[0][0]):
+            cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
+            score_first = cursor.fetchall()
+            score_new = score_first[0][0]+1
+            print(score_new)
+            cursor.execute("UPDATE users SET score = (?) WHERE id_user = (?)", [score_new, id_user])
+            con.commit()
+            await message.answer(text='Вы решили верно!')
+        else:
+            fot2 = f'{foto_answ[0][0]}.jpg'
+            task_image2 = FSInputFile(fot2)
+            await message.answer(text='К сожалению вы решили не верно.\nВот правильное решение:')
+            await message.answer_photo(photo=task_image2, reply_markup=types.ReplyKeyboardRemove())
+        cursor.execute("SELECT number FROM test_mech")
+        num = cursor.fetchall()
+        cursor.execute("SELECT uslov FROM test_mech")
+        uslov = cursor.fetchall()
+        await message.answer(f'Задача №{num[1][0]}\nВведите только число, округленное до целого по математическим правилам')
+        fot1 = f'{uslov[1][0]}.pdf'
+        task_image1 = FSInputFile(fot1)
+        await state.set_state(Form_mech.otv2_mech)
+        await message.answer_photo(photo=task_image1, reply_markup=types.ReplyKeyboardRemove())
+    except ValueError:
+        await message.answer(text='Округлите число до целого')
 
 @router.message(Form_mech.otv2_mech)
 async def get_fio(message: Message, state: FSMContext):
@@ -72,28 +76,32 @@ async def get_fio(message: Message, state: FSMContext):
     otvet = data['otvet2']
     print(otvet)
     print(cor_otv[1][0])
-    if int(otvet) == int(cor_otv[1][0]):
-        cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
-        score_first = cursor.fetchall()
-        score_new = score_first[0][0]+1
-        print(score_new)
-        cursor.execute("UPDATE users SET score = (?) WHERE id_user = (?)", [score_new, id_user])
-        con.commit()
-        await message.answer(text='Вы решили верно!')
-    else:
-        fot2 = f'{foto_answ[1][0]}.jpg'
-        task_image2 = FSInputFile(fot2)
-        await message.answer(text='К сожалению вы решили не верно.\nВот правильное решение:')
-        await message.answer_photo(photo=task_image2, reply_markup=types.ReplyKeyboardRemove())
-    cursor.execute("SELECT number FROM test_mech")
-    num = cursor.fetchall()
-    cursor.execute("SELECT uslov FROM test_mech")
-    uslov = cursor.fetchall()
-    await message.answer(f'Задача №{num[2][0]}\nВведите только число, округленное по математическим правилам')
-    fot1 = f'{uslov[2][0]}.pdf'
-    task_image1 = FSInputFile(fot1)
-    await state.set_state(Form_mech.otv3_mech)
-    await message.answer_photo(photo=task_image1, reply_markup=types.ReplyKeyboardRemove())
+    try:
+        number = int(otvet)
+        if number == int(cor_otv[1][0]):
+            cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
+            score_first = cursor.fetchall()
+            score_new = score_first[0][0]+1
+            print(score_new)
+            cursor.execute("UPDATE users SET score = (?) WHERE id_user = (?)", [score_new, id_user])
+            con.commit()
+            await message.answer(text='Вы решили верно!')
+        else:
+            fot2 = f'{foto_answ[1][0]}.jpg'
+            task_image2 = FSInputFile(fot2)
+            await message.answer(text='К сожалению вы решили не верно.\nВот правильное решение:')
+            await message.answer_photo(photo=task_image2, reply_markup=types.ReplyKeyboardRemove())
+        cursor.execute("SELECT number FROM test_mech")
+        num = cursor.fetchall()
+        cursor.execute("SELECT uslov FROM test_mech")
+        uslov = cursor.fetchall()
+        await message.answer(f'Задача №{num[2][0]}\nВведите только число, округленное до целого по математическим правилам')
+        fot1 = f'{uslov[2][0]}.pdf'
+        task_image1 = FSInputFile(fot1)
+        await state.set_state(Form_mech.otv3_mech)
+        await message.answer_photo(photo=task_image1, reply_markup=types.ReplyKeyboardRemove())
+    except ValueError:
+        await message.answer(text='Округлите число до целого')
 
 @router.message(Form_mech.otv3_mech)
 async def get_fio(message: Message, state: FSMContext):
@@ -109,17 +117,21 @@ async def get_fio(message: Message, state: FSMContext):
     print(otvet)
     print(cor_otv[2][0])
     await state.clear()
-    if int(otvet) == int(cor_otv[2][0]):
-        cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
-        score_first = cursor.fetchall()
-        score_new = score_first[0][0] + 1
-        print(score_new)
-        cursor.execute("UPDATE users SET score = (?) WHERE id_user = (?)", [score_new, id_user])
-        con.commit()
-        await message.answer(text='Вы решили верно!')
-    else:
-        fot2 = f'{foto_answ[2][0]}.jpg'
-        task_image2 = FSInputFile(fot2)
-        await message.answer(text='К сожалению вы решили не верно.\nВот правильное решение:')
-        await message.answer_photo(photo=task_image2, reply_markup=types.ReplyKeyboardRemove())
-    await message.answer(text='Для того, чтобы вернуться в меню, введите команду /menu\nДля того, чтобы вернуться в начало,введите команду /start')
+    try:
+        number = int(otvet)
+        if number == int(cor_otv[2][0]):
+            cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
+            score_first = cursor.fetchall()
+            score_new = score_first[0][0] + 1
+            print(score_new)
+            cursor.execute("UPDATE users SET score = (?) WHERE id_user = (?)", [score_new, id_user])
+            con.commit()
+            await message.answer(text='Вы решили верно!')
+        else:
+            fot2 = f'{foto_answ[2][0]}.jpg'
+            task_image2 = FSInputFile(fot2)
+            await message.answer(text='К сожалению вы решили не верно.\nВот правильное решение:')
+            await message.answer_photo(photo=task_image2, reply_markup=types.ReplyKeyboardRemove())
+        await message.answer(text='Для того, чтобы вернуться в меню, введите команду /menu\nДля того, чтобы вернуться в начало,введите команду /start')
+    except ValueError:
+        await message.answer(text='Округлите число до целого')

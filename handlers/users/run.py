@@ -82,7 +82,7 @@ async def fun_text(message: Message):
     for button in kb_choise:
         builder.add(button)
     builder.adjust(1)
-    await message.answer(text='Вы можете выбрать: пройти тест для вашего класса или выбрать раздел физики',
+    await message.answer(text='Вы можете выбрать: пройти общий тест или выбрать раздел физики',
                                   reply_markup=builder.as_markup(resize_keyboard=True))
 
 @router.message(F.text == 'Выбрать раздел физики')
