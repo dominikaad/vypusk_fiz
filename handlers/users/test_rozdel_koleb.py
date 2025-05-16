@@ -38,6 +38,7 @@ async def get_fio(message: Message, state: FSMContext):
     print(cor_otv[0][0])
     try:
         number = int(otvet)
+        await state.clear()
         if number == int(cor_otv[0][0]):
             cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
             score_first = cursor.fetchall()
@@ -79,6 +80,7 @@ async def get_fio(message: Message, state: FSMContext):
     print(cor_otv[1][0])
     try:
         number = int(otvet)
+        await state.clear()
         if number == int(cor_otv[1][0]):
             cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
             score_first = cursor.fetchall()
@@ -118,9 +120,9 @@ async def get_fio(message: Message, state: FSMContext):
     otvet = data['otvet3']
     print(otvet)
     print(cor_otv[2][0])
-    await state.clear()
     try:
         number = int(otvet)
+        await state.clear()
         if number == int(cor_otv[2][0]):
             cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
             score_first = cursor.fetchall()

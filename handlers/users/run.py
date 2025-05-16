@@ -11,10 +11,46 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from loader import router, cursor, con
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
+from openai import OpenAI
 
 class Form_reg(StatesGroup):
     name_2 = State()
     clas_2 = State()
+    quest = State()
+
+@router.message(Command('question'))
+async def fun_text(message: Message, state: FSMContext):
+    await state.clear()
+    await state.set_state(Form_reg.quest)
+    await message.answer(text='Задайте вопрос', reply_markup=types.ReplyKeyboardRemove())
+
+@router.message(Form_reg.quest)
+async def get_fio(message: Message, state: FSMContext):
+    a = await state.get_state()
+    await state.update_data(quest=message.text)
+    data = await state.get_data()
+    quest = data['quest']
+    await state.clear()
+    client = OpenAI(
+           api_key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI2YzIzN2MwLWJmZmMtNGNiZC1hYTVhLTAwZDQ2OWUyZDZmZCIsImlzRGV2ZWxvcGVyIjp0cnVlLCJpYXQiOjE3NDc0MDkzNTgsImV4cCI6MjA2Mjk4NTM1OH0.UMERPpHlEwrx7K5Vv25I7GIIAtn2a5-HMkya_FXDp3A',
+           base_url='https://bothub.chat/api/v2/openai/v1'
+       )
+
+    chat_completion = client.chat.completions.create(
+           messages=[
+               {
+                   'role': 'user',
+                   'content': f'Ты учитель, ответь макимально понячтно для школьника на вопрос:{quest}'
+               }
+           ],
+           model='o3-mini-high',
+       )
+
+    result = chat_completion.choices[0].message.content
+    await message.answer(text=f'Ответ на ваш вопрос:\n{result}')
+    await message.answer(
+        text='Для того, чтобы вернуться в меню, введите команду /menu\nДля того, чтобы ыернуться в начало,введите команду /start')
+
 
 @router.message(F.text == 'Мои данные')
 async def fun_text(message: Message):
@@ -77,7 +113,8 @@ async def get_fio(message: Message, state: FSMContext):
 @router.message(F.text == 'Меню')
 @router.message(F.text == 'Нет')
 @router.message(Command('menu'))
-async def fun_text(message: Message):
+async def fun_text(message: Message, state: FSMContext):
+    await state.clear()
     builder = ReplyKeyboardBuilder()
     for button in kb_choise:
         builder.add(button)

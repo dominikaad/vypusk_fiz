@@ -38,6 +38,7 @@ async def get_fio(message: Message, state: FSMContext):
     print(cor_otv[0][0])
     try:
         number = int(otvet)
+        await state.clear()
         if number == int(cor_otv[0][0]):
             cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
             score_first = cursor.fetchall()
@@ -62,6 +63,7 @@ async def get_fio(message: Message, state: FSMContext):
         await message.answer_photo(photo=task_image1, reply_markup=types.ReplyKeyboardRemove())
     except ValueError:
         await message.answer(text='Округлите число до целого')
+        return
 
 @router.message(Form_el.otv2_elekdyn)
 async def get_fio(message: Message, state: FSMContext):
@@ -78,6 +80,7 @@ async def get_fio(message: Message, state: FSMContext):
     print(cor_otv[1][0])
     try:
         number = int(otvet)
+        await state.clear()
         if number == int(cor_otv[1][0]):
             cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
             score_first = cursor.fetchall()
@@ -102,6 +105,7 @@ async def get_fio(message: Message, state: FSMContext):
         await message.answer_photo(photo=task_image1, reply_markup=types.ReplyKeyboardRemove())
     except ValueError:
         await message.answer(text='Округлите число до целого')
+        return
 
 @router.message(Form_el.otv3_elekdyn)
 async def get_fio(message: Message, state: FSMContext):
@@ -116,9 +120,9 @@ async def get_fio(message: Message, state: FSMContext):
     otvet = data['otvet3']
     print(otvet)
     print(cor_otv[2][0])
-    await state.clear()
     try:
         number = int(otvet)
+        await state.clear()
         if number == int(cor_otv[2][0]):
             cursor.execute("SELECT score FROM users WHERE id_user = (?)", [id_user])
             score_first = cursor.fetchall()
@@ -135,3 +139,4 @@ async def get_fio(message: Message, state: FSMContext):
         await message.answer(text='Для того, чтобы вернуться в меню, введите команду /menu\nДля того, чтобы вернуться в начало,введите команду /start')
     except ValueError:
         await message.answer(text='Округлите число до целого')
+        return
