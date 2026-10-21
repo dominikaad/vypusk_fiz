@@ -1,3 +1,5 @@
+import os
+
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
@@ -32,24 +34,24 @@ async def get_fio(message: Message, state: FSMContext):
     quest = data['quest']
     await state.clear()
     client = OpenAI(
-           api_key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI2YzIzN2MwLWJmZmMtNGNiZC1hYTVhLTAwZDQ2OWUyZDZmZCIsImlzRGV2ZWxvcGVyIjp0cnVlLCJpYXQiOjE3NDc0MDkzNTgsImV4cCI6MjA2Mjk4NTM1OH0.UMERPpHlEwrx7K5Vv25I7GIIAtn2a5-HMkya_FXDp3A',
-           base_url='https://bothub.chat/api/v2/openai/v1'
+           api_key=os.getenv("OPENROUTER_API_KEY"),
+           base_url='https://openrouter.ai/api/v1'
        )
 
     chat_completion = client.chat.completions.create(
            messages=[
                {
                    'role': 'user',
-                   'content': f'Ты учитель, ответь макимально понячтно для школьника на вопрос:{quest}'
+                   'content': f'Ты учитель, ответь коротко, но макисмально понятно, как для школьника на вопрос:{quest}'
                }
            ],
-           model='o3-mini-high',
+           model='openrouter/free',
        )
 
     result = chat_completion.choices[0].message.content
     await message.answer(text=f'Ответ на ваш вопрос:\n{result}')
     await message.answer(
-        text='Для того, чтобы вернуться в меню, введите команду /menu\nДля того, чтобы ыернуться в начало,введите команду /start')
+        text='Для того, чтобы вернуться в меню, введите команду /menu\nДля того, чтобы вернуться в начало,введите команду /start')
 
 
 @router.message(F.text == 'Мои данные')
@@ -128,8 +130,8 @@ async def fun_text(message: Message):
     for button in kb_razdel_fiz:
         builder.add(button)
     builder.adjust(1)
-    await message.answer(text='Выбери раздел физики, про который хочешь узнать информацию',reply_markup=builder.as_markup(resize_keyboard=True))
+    await message.answer(text='Выберите раздел физики, про который хотите узнать информацию',reply_markup=builder.as_markup(resize_keyboard=True))
 
 @router.callback_query(F.data.startswith('exit'))
 async def exit(callback: types.CallbackQuery, bot: Bot):
-    await callback.message.answer(text='Для того, чтобы вернуться в меню, введите команду /menu\nДля того, чтобы ыернуться в начало,введите команду /start')
+    await callback.message.answer(text='Для того, чтобы вернуться в меню, введите команду /menu\nДля того, чтобы вернуться в начало,введите команду /start')
